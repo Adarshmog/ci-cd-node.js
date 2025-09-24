@@ -40,6 +40,6 @@ steps:
     inputs:
       azureSubscription: 'adarsh-azure'
       appName: 'cicd-app-adu'
-      package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
+      package: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
     displayName: 'Deploy to Azure Web App'
 
