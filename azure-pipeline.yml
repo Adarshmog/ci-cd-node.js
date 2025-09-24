@@ -1,0 +1,45 @@
+trigger: none
+
+pool:
+  name: 'Adarsh-CI-CD'
+
+steps:
+  # Step 1: Use Node.js
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '18.x'
+    displayName: 'Install Node.js'
+
+  # Step 2: Install dependencies
+  - script: |
+      npm install
+    displayName: 'Install Dependencies'
+
+  # Step 3: Run tests (currently dummy test)
+  - script: |
+      npm test
+    displayName: 'Run Tests'
+
+  # Step 4: Archive project files into a zip
+  - task: ArchiveFiles@2
+    inputs:
+      rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
+      includeRootFolder: false
+      archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    displayName: 'Archive Files'
+
+  # Step 5: Publish build artifact (for release or deployment)
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'drop'
+    displayName: 'Publish Artifact'
+
+  # Step 6: Deploy to Azure Web App
+  - task: AzureWebApp@1
+    inputs:
+      azureSubscription: 'adarsh-azure'
+      appName: 'cicd-app-adu'
+      package: '$(Pipeline.Workspace)/drop/$(Build.BuildId).zip'
+    displayName: 'Deploy to Azure Web App'
+
